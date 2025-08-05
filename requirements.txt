@@ -1,0 +1,6 @@
+PyQt5>=5.15.0
+PyQt5-tools>=5.15.0
+pywin32>=227
+bleak>=1.0.0
+plyer>=2.1
+wmi>=1.5.1

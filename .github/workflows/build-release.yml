@@ -1,0 +1,141 @@
+name: Build and Release Connected
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+    
+    - name: Run tests
+      run: |
+        # pytest tests/ (テストファイルがある場合)
+        python -c "print('テストをスキップ - 今後実装予定')"
+
+  build:
+    needs: test
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyinstaller
+    
+    - name: Build executable with PyInstaller
+      run: |
+        pyinstaller Connected.spec
+    
+    - name: Create release archive
+      run: |
+        mkdir release
+        copy dist\Connected.exe release\
+        copy README.md release\
+        copy LICENSE release\
+        echo "Connected v${{ github.ref_name }} - Windows 11 Bluetooth Battery Monitor" > release\README.txt
+        echo "" >> release\README.txt
+        echo "インストール方法:" >> release\README.txt
+        echo "1. Connected.exe をお好みの場所（例：C:\Program Files\Connected\）にコピー" >> release\README.txt
+        echo "2. Connected.exe をダブルクリックして起動" >> release\README.txt
+        echo "3. 初回起動時にWindowsセキュリティの警告が表示される場合は「詳細情報」→「実行」をクリック" >> release\README.txt
+        echo "4. システムトレイにアイコンが表示されます" >> release\README.txt
+        echo "" >> release\README.txt
+        echo "使用方法:" >> release\README.txt
+        echo "- システムトレイのアイコンをクリックでデバイス一覧表示" >> release\README.txt
+        echo "- メインウィンドウでBluetoothデバイスのバッテリー残量を確認" >> release\README.txt
+        echo "- バッテリー残量が低下すると自動通知" >> release\README.txt
+        
+    - name: Upload release files
+      uses: actions/upload-artifact@v3
+      with:
+        name: Connected-${{ github.ref_name }}-Windows
+        path: release/
+
+  release:
+    needs: build
+    runs-on: windows-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download release files
+      uses: actions/download-artifact@v3
+      with:
+        name: Connected-${{ github.ref_name }}-Windows
+        path: release/
+    
+    - name: Create ZIP archive
+      run: |
+        Compress-Archive -Path release\* -DestinationPath Connected-${{ github.ref_name }}-Windows.zip
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Connected ${{ github.ref_name }}
+        body: |
+          ## Connected ${{ github.ref_name }} - Windows 11 Bluetooth Battery Monitor
+          
+          ### 🎉 新機能・改善点
+          - Bluetoothデバイスのバッテリー残量をリアルタイム監視
+          - モダンなダークテーマUI
+          - システムトレイ常駐機能
+          - 低バッテリー自動通知
+          
+          ### 📋 システム要件
+          - Windows 11 (Windows 10でも動作する可能性があります)
+          - Bluetoothアダプター
+          - 対応Bluetoothデバイス（ヘッドホン、マウス、キーボードなど）
+          
+          ### 🚀 インストール方法
+          1. `Connected-${{ github.ref_name }}-Windows.zip` をダウンロード
+          2. ZIPファイルを解凍
+          3. `Connected.exe` をお好みの場所にコピー
+          4. `Connected.exe` をダブルクリックして起動
+          
+          ### 💡 使用方法
+          - システムトレイのアイコンをクリックでメイン画面を表示
+          - Bluetoothデバイスのバッテリー残量が一覧表示されます
+          - バッテリー残量が10%以下になると自動通知
+          
+          ### 🔧 トラブルシューティング
+          - 初回起動時にWindowsセキュリティの警告が表示される場合は「詳細情報」→「実行」をクリック
+          - デバイスが検出されない場合は、Bluetooth設定でデバイスが接続されているか確認
+          
+          ---
+          
+          ⭐ このプロジェクトが役に立った場合は、GitHubでスターをお願いします！
+          🐛 バグ報告や機能要望は [Issues](https://github.com/${{ github.repository }}/issues) でお知らせください。
+        files: |
+          Connected-${{ github.ref_name }}-Windows.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

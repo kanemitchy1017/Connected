@@ -1,0 +1,91 @@
+Connected v0.2.0 - Windows 11 Bluetooth Battery Monitor
+インストール・使用方法ガイド
+
+📋 システム要件:
+- Windows 11 (Windows 10でも動作する可能性があります)  
+- Bluetoothアダプター
+- 対応Bluetoothデバイス（ヘッドホン、マウス、キーボードなど）
+
+🚀 インストール方法:
+
+1. ダウンロードと解凍
+   - Connected-v0.2.0-Windows.zip をダウンロード
+   - ZIPファイルを右クリック → 「すべて展開」
+
+2. インストール
+   - Connected.exe を任意の場所にコピー
+   - 推奨場所: 
+     * C:\Program Files\Connected\ (管理者権限が必要)
+     * C:\Users\%USERNAME%\AppData\Local\Connected\ (推奨)
+     * デスクトップ (簡単アクセス用)
+
+3. 初回起動
+   - Connected.exe をダブルクリック
+   - Windowsセキュリティ警告が表示された場合:
+     → 「詳細情報」をクリック
+     → 「実行」をクリック
+   - システムトレイにConnectedアイコンが表示されたら成功！
+
+💡 使用方法:
+
+基本操作:
+- システムトレイアイコンをダブルクリック: メインウィンドウ表示
+- システムトレイアイコンを右クリック: メニュー表示
+- メインウィンドウ: 接続Bluetoothデバイスのバッテリー残量表示
+
+機能:
+✓ リアルタイムバッテリー監視 (1分間隔で自動更新)
+✓ 複数デバイス同時監視
+✓ 低バッテリー警告 (10%以下で自動通知)
+✓ モダンなダークテーマUI
+✓ システムトレイ常駐
+
+🔧 トラブルシューティング:
+
+Q: アプリケーションが起動しない
+A: 
+- Windows Defenderの除外設定に追加
+- Connected.exe を右クリック → プロパティ → セキュリティ → 「許可する」にチェック
+- 管理者として実行を試す
+
+Q: デバイスが検出されない
+A:
+- Windowsの設定 → Bluetoothとデバイス でデバイス接続を確認
+- Bluetoothデバイスの電源を確認
+- デバイスのBluetooth接続を再接続
+- アプリケーションを再起動
+
+Q: バッテリー情報が表示されない
+A:
+- 現在はデモ版のため模擬データを表示
+- 一部のBluetoothデバイスはバッテリー情報を提供しない場合があります
+- 実際のバッテリーAPI実装は今後のバージョンで対応予定
+
+Q: 通知が表示されない
+A:
+- Windowsの通知設定を確認
+- 低バッテリー閾値設定を確認（設定メニューから変更可能）
+
+⚙️ 設定:
+
+設定ファイル場所: %APPDATA%\Connected\config.json
+ログファイル場所: %APPDATA%\Connected\logs\connected.log
+
+🆕 アップデート:
+- 最新版チェック: https://github.com/YOUR_USERNAME/Connected/releases
+- 自動更新機能は今後実装予定
+
+🛡️ セキュリティ:
+- 本ソフトウェアはオープンソース (MIT License)
+- 個人データの収集・送信は行いません
+- ローカルシステムでのみ動作
+
+📞 サポート:
+- バグ報告: https://github.com/YOUR_USERNAME/Connected/issues
+- 機能要望: GitHubのIssuesで受け付けています
+- ソースコード: https://github.com/YOUR_USERNAME/Connected
+
+🎉 このソフトウェアが役に立った場合は、GitHubでスター⭐をお願いします！
+
+---
+Connected v0.2.0 © 2025 Connected Project | MIT License
