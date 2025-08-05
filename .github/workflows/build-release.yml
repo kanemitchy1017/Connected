@@ -9,13 +9,13 @@ on:
 
 jobs:
   test:
-    runs-on: windows-latest
+    runs-on: windows-2022
     
     steps:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.12'
     
@@ -32,14 +32,14 @@ jobs:
 
   build:
     needs: test
-    runs-on: windows-latest
+    runs-on: windows-2022
     if: startsWith(github.ref, 'refs/tags/v')
     
     steps:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.12'
     
@@ -55,39 +55,39 @@ jobs:
     
     - name: Create release archive
       run: |
-        mkdir release
-        copy dist\Connected.exe release\
-        copy README.md release\
-        copy LICENSE release\
-        echo "Connected v${{ github.ref_name }} - Windows 11 Bluetooth Battery Monitor" > release\README.txt
-        echo "" >> release\README.txt
-        echo "インストール方法:" >> release\README.txt
-        echo "1. Connected.exe をお好みの場所（例：C:\Program Files\Connected\）にコピー" >> release\README.txt
-        echo "2. Connected.exe をダブルクリックして起動" >> release\README.txt
-        echo "3. 初回起動時にWindowsセキュリティの警告が表示される場合は「詳細情報」→「実行」をクリック" >> release\README.txt
-        echo "4. システムトレイにアイコンが表示されます" >> release\README.txt
-        echo "" >> release\README.txt
-        echo "使用方法:" >> release\README.txt
-        echo "- システムトレイのアイコンをクリックでデバイス一覧表示" >> release\README.txt
-        echo "- メインウィンドウでBluetoothデバイスのバッテリー残量を確認" >> release\README.txt
-        echo "- バッテリー残量が低下すると自動通知" >> release\README.txt
+        New-Item -ItemType Directory -Force -Path release
+        Copy-Item dist\Connected.exe release\
+        Copy-Item README.md release\
+        Copy-Item LICENSE release\
+        "Connected v${{ github.ref_name }} - Windows 11 Bluetooth Battery Monitor" | Out-File -FilePath release\README.txt -Encoding UTF8
+        "" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "インストール方法:" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "1. Connected.exe をお好みの場所（例：C:\Program Files\Connected\）にコピー" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "2. Connected.exe をダブルクリックして起動" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "3. 初回起動時にWindowsセキュリティの警告が表示される場合は「詳細情報」→「実行」をクリック" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "4. システムトレイにアイコンが表示されます" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "使用方法:" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "- システムトレイのアイコンをクリックでデバイス一覧表示" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "- メインウィンドウでBluetoothデバイスのバッテリー残量を確認" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
+        "- バッテリー残量が低下すると自動通知" | Out-File -FilePath release\README.txt -Append -Encoding UTF8
         
     - name: Upload release files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: Connected-${{ github.ref_name }}-Windows
         path: release/
 
   release:
     needs: build
-    runs-on: windows-latest
+    runs-on: windows-2022
     if: startsWith(github.ref, 'refs/tags/v')
     
     steps:
     - uses: actions/checkout@v4
     
     - name: Download release files
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: Connected-${{ github.ref_name }}-Windows
         path: release/
